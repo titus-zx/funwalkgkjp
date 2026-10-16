@@ -10,7 +10,12 @@ function doGet(e) {
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
+// Jalankan sekali dari Extensions > Apps Script pada spreadsheet tujuan.
 function setupSheet() {
+  const active = SpreadsheetApp.getActiveSpreadsheet();
+  if (active) {
+    PropertiesService.getScriptProperties().setProperty('SPREADSHEET_ID', active.getId());
+  }
   const sheet = getSheet_();
   getPaymentFolder_();
   sheet.setFrozenRows(1);
@@ -51,9 +56,7 @@ function register(form) {
 }
 
 function getSheet_() {
-  const id = PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID');
-  if (!id) throw new Error('SPREADSHEET_ID belum disetel panitia.');
-  const ss = SpreadsheetApp.openById(id);
+  const ss = getSpreadsheet_();
   let sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
   if (!sheet) sheet = ss.insertSheet(CONFIG.SHEET_NAME);
   // Append new column headers without shifting or replacing existing registration rows.
@@ -106,3 +109,15 @@ function getRegisteredFamilies() {
     .map(function(row){return {familyName:String(row[2]).replace(/^'(?=[=+@-])/, ''),participants:Number(row[4])};});
 }
 
+
+// Web App tidak selalu memiliki spreadsheet aktif. ID disimpan saat setup
+// agar request dari Vercel tetap menggunakan spreadsheet yang sama.
+function getSpreadsheet_() {
+  const props = PropertiesService.getScriptProperties();
+  const id = props.getProperty('SPREADSHEET_ID');
+  if (id) return SpreadsheetApp.openById(id);
+  const active = SpreadsheetApp.getActiveSpreadsheet();
+  if (!active) throw new Error('Buka spreadsheet tujuan > Extensions > Apps Script, lalu jalankan setupSheet sekali sebelum deploy.');
+  props.setProperty('SPREADSHEET_ID', active.getId());
+  return active;
+}

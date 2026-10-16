@@ -56,3 +56,20 @@ test('Apps Script stores region and optional private proof without treating an u
   failAppend=true;assert.throws(()=>context.register(withProof));assert.equal(trashed,1);
   assert.throws(()=>context.register({...form,region:'Other'}));
 });
+
+test('bound spreadsheet setup remembers its ID for later web requests', () => {
+  const properties={SPREADSHEET_ID:'old-sheet'};let opened,activeAvailable=true;
+  const range={setValues(){return this},setBackground(){return this},setFontColor(){return this},setFontWeight(){return this},setNumberFormat(){return this}};
+  const sheet={getRange:()=>range,setFrozenRows(){},getParent:()=>spreadsheet};
+  const spreadsheet={getId:()=> 'bound-sheet',getUrl:()=> 'https://docs.google.com/spreadsheets/d/bound-sheet/edit',getSheetByName:()=>sheet};
+  const context={
+    PropertiesService:{getScriptProperties:()=>({getProperty:key=>properties[key],setProperty(key,value){properties[key]=value}})},
+    SpreadsheetApp:{getActiveSpreadsheet:()=>activeAvailable?spreadsheet:null,openById(id){opened=id;return spreadsheet}},
+    DriveApp:{createFolder:()=>({getId:()=> 'proof-folder'}),getFolderById:()=>({})}
+  };
+  vm.createContext(context);vm.runInContext(fs.readFileSync('Code.gs','utf8'),context);
+  assert.equal(context.setupSheet(),spreadsheet.getUrl());assert.equal(properties.SPREADSHEET_ID,'bound-sheet');
+  activeAvailable=false;context.getSheet_();assert.equal(opened,'bound-sheet');
+  delete properties.SPREADSHEET_ID;assert.throws(()=>context.getSheet_(),/setupSheet/);
+  activeAvailable=true;assert.equal(context.getSpreadsheet_(),spreadsheet);assert.equal(properties.SPREADSHEET_ID,'bound-sheet');
+});
