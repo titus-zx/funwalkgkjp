@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fun Walk GKJ Pamulang 2026</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#163b30;background:#f2f7f2}
+*{box-sizing:border-box} body{margin:0;padding:24px 12px}
+main{max-width:480px;margin:auto;background:white;border-radius:22px;overflow:hidden;box-shadow:0 12px 35px #153e2719}
+header{background:linear-gradient(135deg,#145c40,#229466);color:white;padding:30px 25px;text-align:center}
+header small{letter-spacing:2px;font-weight:700}h1{font-size:28px;margin:14px 0 8px}header p{margin:5px 0;opacity:.95}
+form,#success{padding:26px}label{font-weight:650;display:block;margin-bottom:8px}
+.field{margin-bottom:22px}input{width:100%;border:1px solid #cddbd2;border-radius:12px;padding:14px;font:inherit}
+input:focus{outline:2px solid #229466}
+.stepper{display:flex;align-items:center;gap:15px}.stepper button{width:48px;height:48px;background:#e7f3eb;color:#145c40;border:0;border-radius:12px;font-size:24px;cursor:pointer}
+.stepper output{flex:1;text-align:center;font-size:22px;font-weight:750}
+.total{background:#edf7f0;padding:18px;border-radius:14px;margin-bottom:20px}.total strong{font-size:30px;display:block;color:#147d4c;margin-top:5px}
+.primary{width:100%;border:0;border-radius:12px;background:#167b50;color:#fff;font-size:17px;font-weight:700;padding:16px;cursor:pointer}
+.primary:disabled{opacity:.55;cursor:wait}.hint{color:#65756b;font-size:13px;line-height:1.5}
+.error{color:#b91c1c;margin-bottom:16px}#success{text-align:center}#success h2{color:#147d4c}
+[hidden]{display:none!important}
+</style>
+</head>
+<body><main>
+<header><small>PHBK 2 • GKJ PAMULANG</small><h1>FUN WALK 2026</h1><p>Berjalan Bersama, Menjalin Kebersamaan</p><p>Sabtu, 14 November 2026</p></header>
+<form id="form">
+<div class="field"><label for="familyName">Nama keluarga / perwakilan</label><input id="familyName" maxlength="80" minlength="3" required placeholder="Contoh: Keluarga Budi Santoso" autocomplete="name"></div>
+<div class="field"><label for="phone">Nomor HP / WhatsApp</label><input id="phone" type="tel" inputmode="tel" required placeholder="081234567890" autocomplete="tel"></div>
+<div class="field"><label>Jumlah peserta (termasuk pendaftar)</label><div class="stepper"><button type="button" id="minus" aria-label="Kurangi peserta">−</button><output id="count">1 orang</output><button type="button" id="plus" aria-label="Tambah peserta">+</button></div></div>
+<div class="total"><span>Total biaya pendaftaran</span><strong id="total">Rp10.000</strong><span class="hint">Rp10.000 × jumlah peserta</span></div>
+<p id="error" class="error" role="alert" hidden></p>
+<button id="submit" class="primary" type="submit">Daftar Sekarang</button>
+<p class="hint">Satu pendaftaran untuk satu keluarga. Pastikan nomor WhatsApp dapat dihubungi panitia. Pembayaran belum diproses melalui aplikasi ini.</p>
+</form>
+<section id="success" hidden><h2>✓ Pendaftaran berhasil!</h2><p>Terima kasih, <strong id="resultName"></strong>.</p><p>Nomor pendaftaran:</p><h2 id="resultId"></h2><p id="resultTotal"></p><p class="hint">Simpan nomor pendaftaran ini. Panitia akan memberikan informasi pembayaran lebih lanjut.</p><button class="primary" onclick="location.reload()">Pendaftaran baru</button></section>
+</main>
+<script>
+let participants=1;const $=id=>document.getElementById(id);
+function render(){ $('count').textContent=participants+' orang'; $('total').textContent=new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(participants*10000); }
+$('minus').onclick=()=>{participants=Math.max(1,participants-1);render()};
+$('plus').onclick=()=>{participants=Math.min(30,participants+1);render()};
+$('form').addEventListener('submit',ev=>{
+ev.preventDefault();$('error').hidden=true;
+const form={familyName:$('familyName').value.trim(),phone:$('phone').value.trim(),participants};
+if(form.familyName.length<3){showError('Nama keluarga minimal 3 karakter.');return}
+if(!/^(?:\+62|62|0)8\d{7,11}$/.test(form.phone.replace(/[\s().-]/g,''))){showError('Nomor HP Indonesia tidak valid.');return}
+$('submit').disabled=true;$('submit').textContent='Menyimpan...';
+if(!(window.google&&google.script&&google.script.run)){showError('Buka formulir dari URL Google Apps Script Web App.');reset();return}
+google.script.run.withSuccessHandler(res=>{
+$('form').hidden=true;$('success').hidden=false;
+$('resultName').textContent=res.familyName;$('resultId').textContent=res.id;
+$('resultTotal').textContent='Jumlah '+res.participants+' peserta • Total '+new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(res.total);
+}).withFailureHandler(err=>{showError(err.message||'Gagal mendaftar. Coba lagi.');reset()}).register(form);
+});
+function showError(message){$('error').textContent=message;$('error').hidden=false}
+function reset(){$('submit').disabled=false;$('submit').textContent='Daftar Sekarang'}
+</script></body></html>
