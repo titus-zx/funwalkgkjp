@@ -8,7 +8,7 @@
     "api/register.js": {
       "maxDuration": 30
     },
-    "api/paid.js": {
+    "api/registrations.js": {
       "maxDuration": 30
     }
   }

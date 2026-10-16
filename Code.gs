@@ -1,9 +1,9 @@
 const CONFIG = { SHEET_NAME: 'Pendaftaran', FEE: 10000, MAX: 30, HEADERS: ['Waktu Daftar','ID Pendaftaran','Nama Keluarga','No HP','Jumlah Peserta','Biaya Pendaftaran (Rp)','Wilayah Pelayanan','Bukti Bayar','Status Pembayaran'] };
 
 function doGet(e) {
-  if (e && e.parameter && e.parameter.action === 'paid') {
-    try { return json_({ok:true, data:getPaidFamilies()}); }
-    catch (err) { return json_({ok:false, error:'Daftar pembayaran belum tersedia.'}); }
+  if (e && e.parameter && e.parameter.action === 'registrations') {
+    try { return json_({ok:true, data:getRegisteredFamilies()}); }
+    catch (err) { return json_({ok:false, error:'Daftar pendaftaran belum tersedia.'}); }
   }
   return HtmlService.createHtmlOutputFromFile('Index')
     .setTitle('Pendaftaran Fun Walk GKJ Pamulang 2026')
@@ -98,11 +98,11 @@ function validateProof_(proof) {
   if (bytes.length > 2097152 || !(jpeg || png || webp)) throw new Error('Bukti bayar harus JPG, PNG, atau WebP, maksimal 2 MB.');
   return {bytes:bytes,mimeType:proof.mimeType,extension:types[proof.mimeType]};
 }
-function getPaidFamilies() {
+function getRegisteredFamilies() {
   const sheet = getSheet_();
   if (sheet.getLastRow() < 2) return [];
   return sheet.getRange(2,1,sheet.getLastRow()-1,CONFIG.HEADERS.length).getValues()
-    .filter(function(row){return String(row[8]).trim().toLowerCase() === 'lunas';})
+    .filter(function(row){return String(row[2]).trim() && Number.isInteger(Number(row[4])) && Number(row[4]) >= 1 && Number(row[4]) <= CONFIG.MAX;})
     .map(function(row){return {familyName:String(row[2]).replace(/^'(?=[=+@-])/, ''),participants:Number(row[4])};});
 }
 

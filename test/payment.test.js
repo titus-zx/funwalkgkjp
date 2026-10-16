@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const {validProof} = require('../lib/validation');
-const paid = require('../api/paid');
+const registrations = require('../api/registrations');
 test('proof validation enforces types, signatures, and size', () => {
   assert.equal(validProof(null),true);
   assert.equal(validProof({mimeType:'image/png',base64:Buffer.from([137,80,78,71,13,10,26,10]).toString('base64')}),true);
@@ -11,27 +11,27 @@ test('proof validation enforces types, signatures, and size', () => {
   assert.equal(validProof({mimeType:'image/svg+xml',base64:'PHN2Zz4='}),false);
   assert.equal(validProof({mimeType:'image/jpeg',base64:Buffer.alloc(2097153,255).toString('base64')}),false);
 });
-test('paid endpoint returns only public fields and handles upstream errors', async () => {
+test('registrations endpoint returns only public fields and handles upstream errors', async () => {
   const previousFetch=global.fetch, previousUrl=process.env.APPS_SCRIPT_URL;
-  const call=async(method)=>{const res={setHeader(){},status(code){this.code=code;return this},json(data){this.data=data;return this}};await paid({method},res);return res};
+  const call=async(method)=>{const res={setHeader(){},status(code){this.code=code;return this},json(data){this.data=data;return this}};await registrations({method},res);return res};
   try {
     assert.equal((await call('POST')).code,405);
     delete process.env.APPS_SCRIPT_URL;assert.equal((await call('GET')).code,503);
     process.env.APPS_SCRIPT_URL='https://script.google.com/macros/s/example/exec';
-    global.fetch=async(url)=>{assert.ok(url.endsWith('?action=paid'));return {ok:true,json:async()=>({ok:true,data:[{familyName:'Budi',participants:3,phone:'private',proof:'private'}]})}};
+    global.fetch=async(url)=>{assert.ok(url.endsWith('?action=registrations'));return {ok:true,json:async()=>({ok:true,data:[{familyName:'Budi',participants:3,phone:'private',proof:'private'}]})}};
     const response=await call('GET');assert.equal(response.code,200);assert.deepEqual(response.data,{families:[{familyName:'Budi',participants:3}]});
     global.fetch=async()=>({ok:true,json:async()=>({ok:true,data:[{familyName:'Budi',participants:100}]})});
     assert.equal((await call('GET')).code,502);
     global.fetch=async()=>{throw Error('timeout')};assert.equal((await call('GET')).code,502);
   } finally {global.fetch=previousFetch;if(previousUrl===undefined)delete process.env.APPS_SCRIPT_URL;else process.env.APPS_SCRIPT_URL=previousUrl}
 });
-test('Apps Script migrates headers, validates uploads, and only lists confirmed payments', () => {
+test('Apps Script migrates headers, validates uploads, and lists all registrations regardless of payment status', () => {
   const rows=[['date','id','Budi','phone',2,20000,'PP1','secret','Menunggu verifikasi'],['date','id','Sari','phone',3,30000,'PP2','secret','Lunas'],['date','id','Tono','phone',1,10000]];
   let headers;
   const sheet={getLastRow:()=>4,getRange:(row,col,count,width)=> row===1 ? {setValues(value){headers=value[0]}} : {getValues:()=>rows}};
   const context={PropertiesService:{getScriptProperties:()=>({getProperty:()=> 'sheet-id'})},SpreadsheetApp:{openById:()=>({getSheetByName:()=>sheet})},Utilities:{base64Decode:value=>Array.from(Buffer.from(value,'base64'))}};
   vm.createContext(context);vm.runInContext(fs.readFileSync('Code.gs','utf8'),context);
-  assert.deepEqual(JSON.parse(JSON.stringify(context.getPaidFamilies())),[{familyName:'Sari',participants:3}]);
+  assert.deepEqual(JSON.parse(JSON.stringify(context.getRegisteredFamilies())),[{familyName:'Budi',participants:2},{familyName:'Sari',participants:3},{familyName:'Tono',participants:1}]);
   assert.equal(headers.length,9);assert.equal(rows[0][2],'Budi');
   assert.equal(context.validateProof_(null),null);
   assert.throws(()=>context.validateProof_({mimeType:'image/jpeg',base64:'aGVsbG8='}));

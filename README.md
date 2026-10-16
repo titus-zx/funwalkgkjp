@@ -23,14 +23,14 @@ Kolom: Waktu Daftar | ID Pendaftaran | Nama Keluarga | No HP | Jumlah Peserta | 
 
 Form tidak memproses pembayaran. Batasi akses spreadsheet kepada panitia. Endpoint publik dapat menerima spam atau pendaftaran berulang; jika pengiriman terputus, periksa spreadsheet sebelum mengirim ulang.
 
-## Wilayah, bukti bayar, dan daftar pembayaran
+## Wilayah, bukti bayar, dan daftar pendaftaran
 - Pilihan wilayah wajib: PP1, PP2, Reni Jaya, Bukit Indah, Serpong.
 - Bukti bayar opsional: kamera atau unggah JPG/PNG/WebP maksimal 2 MB. Tanpa bukti, status **Belum bayar**; dengan bukti, **Menunggu verifikasi**.
 - Kolom G–I ditambahkan sebagai Wilayah Pelayanan, Bukti Bayar, Status Pembayaran, tanpa menggeser data lama.
 - **Penting setelah update:** salin Code.gs dan Index.html terbaru ke Apps Script, jalankan setupSheet kembali, izinkan akses Drive, lalu deploy versi baru. Update repo/Vercel saja tidak memperbarui Apps Script.
 - setupSheet membuat folder Drive untuk bukti dan menyimpan ID di Script Property PAYMENT_FOLDER_ID. Bisa diisi dahulu dengan ID folder milik panitia. Folder dan file tidak dibuat publik; beri akses hanya ke panitia yang meninjau.
 - Panitia memeriksa bukti melalui tautan di kolom H, lalu mengisi **Lunas** pada kolom I setelah pembayaran benar-benar diterima. Bayar tunai atau bayar belakangan juga dikonfirmasi dengan mengisi Lunas pada baris pendaftaran yang sama.
-- Tabel publik hanya mengambil nama keluarga dan jumlah peserta dari baris berstatus Lunas. Bukti, wilayah, nomor HP, dan data lain tidak dikirim ke tabel publik.
+- Tabel publik menampilkan nama keluarga dan jumlah peserta dari semua pendaftaran, tanpa menyaring status pembayaran. Bukti, wilayah, nomor HP, dan data lain tidak dikirim ke tabel publik.
 - Untuk bayar belakangan, peserta dapat menghubungi panitia dengan ID pendaftaran; belum ada fitur unggah bukti susulan mandiri.
-- Uji tanpa bukti, dengan bukti, lalu tandai satu pendaftaran uji Lunas dan pastikan hanya nama serta jumlah peserta tampil. Jangan menandai Lunas otomatis hanya karena gambar diunggah.
+- Uji pendaftaran tanpa bukti dan dengan bukti; keduanya harus muncul di tabel dengan hanya nama keluarga serta jumlah peserta. Jangan menandai Lunas otomatis hanya karena gambar diunggah.
 
