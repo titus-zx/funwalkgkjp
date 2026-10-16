@@ -22,6 +22,7 @@ input:focus{outline:2px solid #229466}
 [hidden]{display:none!important}
 .event-info{padding:18px 26px 0}.event-info dl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0}.event-info dl div{background:#f2f7f2;border-radius:12px;padding:12px}.event-info dt{font-size:12px;color:#65756b;margin-bottom:5px}.event-info dd{margin:0;font-size:14px;font-weight:650;line-height:1.5}.event-info details{margin-top:14px;border-bottom:1px solid #e5ece7;padding-bottom:14px;font-size:14px;line-height:1.6}.event-info summary{cursor:pointer;color:#145c40;font-weight:650}.event-info details p{margin:12px 0 6px}.event-info ul{padding-left:20px;margin:6px 0}.event-info a{color:#145c40;text-underline-offset:3px}.form-title{font-size:21px;margin:0 0 6px}.form-intro{margin:0 0 22px}.included{display:block;margin-top:6px}.theme{font-size:13px;margin-top:12px!important}.contact-links{display:flex;flex-wrap:wrap;gap:8px 16px}
 @media(max-width:360px){header{padding:24px 18px}.event-info{padding:16px 18px 0}form,#success{padding:22px 18px}}
+fieldset.field{border:0;padding:0;min-width:0}legend{font-weight:650;margin-bottom:10px}.regions{display:flex;flex-wrap:wrap;gap:8px}.regions label{display:flex;align-items:center;gap:8px;margin:0;padding:10px 12px;border:1px solid #cddbd2;border-radius:10px;font-size:14px}.regions input{width:auto;padding:0;accent-color:#167b50}.upload-actions{display:flex;flex-wrap:wrap;gap:8px}.secondary{border:1px solid #cddbd2;border-radius:10px;background:#f2f7f2;color:#145c40;padding:10px 12px;font:inherit;cursor:pointer}.proof-preview{display:block;max-width:100%;max-height:180px;border-radius:10px;margin-top:12px}.paid-section{padding:24px 26px;border-top:1px solid #e5ece7}.paid-section h2{font-size:20px;margin:0 0 8px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:12px 8px;border-bottom:1px solid #e5ece7;overflow-wrap:anywhere}th:last-child,td:last-child{text-align:right}th{background:#edf7f0}#proofInfo{overflow-wrap:anywhere}
 </style>
 </head>
 <body><main>
@@ -46,27 +47,40 @@ input:focus{outline:2px solid #229466}
 <p class="hint form-intro">Daftarkan keluarga Anda untuk ikut berjalan bersama.</p>
 <div class="field"><label for="familyName">Nama keluarga / perwakilan</label><input id="familyName" maxlength="80" minlength="3" required placeholder="Contoh: Keluarga Budi Santoso" autocomplete="name"></div>
 <div class="field"><label for="phone">Nomor HP / WhatsApp</label><input id="phone" type="tel" inputmode="tel" required placeholder="081234567890" autocomplete="tel"></div>
+<fieldset class="field"><legend>Wilayah Pelayanan</legend><div class="regions"><label><input type="radio" name="region" value="PP1" required>PP1</label><label><input type="radio" name="region" value="PP2" required>PP2</label><label><input type="radio" name="region" value="Reni Jaya" required>Reni Jaya</label><label><input type="radio" name="region" value="Bukit Indah" required>Bukit Indah</label><label><input type="radio" name="region" value="Serpong" required>Serpong</label></div></fieldset>
 <div class="field"><label>Jumlah peserta (termasuk pendaftar)</label><div class="stepper"><button type="button" id="minus" aria-label="Kurangi peserta">−</button><output id="count">1 orang</output><button type="button" id="plus" aria-label="Tambah peserta">+</button></div></div>
 <div class="total"><span>Total biaya pendaftaran</span><strong id="total">Rp10.000</strong><span class="hint">Rp10.000 × jumlah peserta</span><span class="hint included">Termasuk air mineral dan snack pagi per peserta.</span></div>
+<fieldset class="field"><legend>Bukti bayar <span class="hint">(opsional)</span></legend>
+<p class="hint">Boleh daftar dulu dan bayar nanti. Jika sudah membayar, foto atau unggah bukti untuk diverifikasi panitia.</p>
+<div class="upload-actions"><button type="button" class="secondary" id="takePhoto">Foto bukti</button><button type="button" class="secondary" id="chooseProof">Unggah gambar</button><button type="button" class="secondary" id="removeProof" hidden>Hapus</button></div>
+<input type="file" id="proofCamera" accept="image/jpeg,image/png,image/webp" capture="environment" hidden>
+<input type="file" id="proofFile" accept="image/jpeg,image/png,image/webp" hidden>
+<p class="hint" id="proofInfo" role="status">JPG, PNG, atau WebP · maksimal 2 MB.</p><img id="proofPreview" class="proof-preview" alt="Pratinjau bukti bayar" hidden>
+<p class="hint">Nama keluarga dan jumlah peserta akan tampil di tabel setelah pembayaran dikonfirmasi panitia. Bukti bayar dan nomor HP tidak ditampilkan.</p>
+</fieldset>
 <p id="error" class="error" role="alert" hidden></p>
 <button id="submit" class="primary" type="submit">Daftar Sekarang</button>
 <p class="hint">Satu pendaftaran untuk satu keluarga. Pastikan nomor WhatsApp dapat dihubungi panitia. Pembayaran belum diproses melalui aplikasi ini.</p>
 </form>
-<section id="success" hidden><h2>✓ Pendaftaran berhasil!</h2><p>Terima kasih, <strong id="resultName"></strong>.</p><p>Nomor pendaftaran:</p><h2 id="resultId"></h2><p id="resultTotal"></p><p class="hint">Simpan nomor pendaftaran ini. Panitia akan memberikan informasi pembayaran lebih lanjut.</p><button class="primary" onclick="location.reload()">Pendaftaran baru</button></section>
+<section id="success" hidden><h2>✓ Pendaftaran berhasil!</h2><p>Terima kasih, <strong id="resultName"></strong>.</p><p>Nomor pendaftaran:</p><h2 id="resultId"></h2><p id="resultTotal"></p><p class="hint">Simpan nomor pendaftaran ini untuk konfirmasi atau pembayaran belakangan. Jika mengunggah bukti, tunggu verifikasi panitia sebelum nama muncul di tabel.</p><button class="primary" onclick="location.reload()">Pendaftaran baru</button></section>
+<section class="paid-section" aria-labelledby="paidTitle"><h2 id="paidTitle">Keluarga yang Sudah Bayar</h2><p class="hint">Pembayaran yang telah dikonfirmasi panitia.</p><p id="paidStatus" class="hint" role="status">Memuat daftar pembayaran...</p><table id="paidTable" hidden><thead><tr><th scope="col">Nama keluarga</th><th scope="col">Jumlah peserta</th></tr></thead><tbody id="paidRows"></tbody></table><button type="button" class="secondary" id="refreshPaid">Muat ulang</button></section>
 </main>
 <script>
-let participants=1;const $=id=>document.getElementById(id);
+let participants=1, paymentProof=null, proofLoading=false, submitting=false, previewUrl=null;const $=id=>document.getElementById(id);
 function render(){ $('count').textContent=participants+' orang'; $('total').textContent=new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(participants*10000); }
 $('minus').onclick=()=>{participants=Math.max(1,participants-1);render()};
 $('plus').onclick=()=>{participants=Math.min(30,participants+1);render()};
 $('form').addEventListener('submit',ev=>{
-ev.preventDefault();$('error').hidden=true;
-const form={familyName:$('familyName').value.trim(),phone:$('phone').value.trim(),participants};
+ev.preventDefault();if(submitting)return;$('error').hidden=true;
+if(proofLoading){showError('Tunggu sampai gambar selesai dibaca.');return}
+const form={familyName:$('familyName').value.trim(),phone:$('phone').value.trim(),participants,region:document.querySelector('input[name="region"]:checked')?.value,paymentProof};
 if(form.familyName.length<3){showError('Nama keluarga minimal 3 karakter.');return}
 if(!/^(?:\+62|62|0)8\d{7,11}$/.test(form.phone.replace(/[\s().-]/g,''))){showError('Nomor HP Indonesia tidak valid.');return}
-$('submit').disabled=true;$('submit').textContent='Menyimpan...';
+if(!form.region){showError('Pilih Wilayah Pelayanan.');return}
+submitting=true;setProofDisabled(true);$('submit').disabled=true;$('submit').textContent='Menyimpan...';
 const onSuccess=res=>{
 $('form').hidden=true;$('success').hidden=false;
+loadPaid();
 $('resultName').textContent=res.familyName;$('resultId').textContent=res.id;
 $('resultTotal').textContent='Jumlah '+res.participants+' peserta • Total '+new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(res.total);
 };
@@ -80,5 +94,42 @@ if(window.google&&google.script&&google.script.run){
 }
 });
 function showError(message){$('error').textContent=message;$('error').hidden=false}
-function reset(){$('submit').disabled=false;$('submit').textContent='Daftar Sekarang'}
+function reset(){submitting=false;setProofDisabled(false);$('submit').disabled=false;$('submit').textContent='Daftar Sekarang'}
+
+function setProofDisabled(disabled){['takePhoto','chooseProof','removeProof'].forEach(id=>$(id).disabled=disabled)}
+$('takePhoto').onclick=()=>$('proofCamera').click();
+$('chooseProof').onclick=()=>$('proofFile').click();
+function clearProof(){
+  paymentProof=null;if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=null;
+  $('proofPreview').hidden=true;$('proofPreview').removeAttribute('src');$('removeProof').hidden=true;
+  $('proofCamera').value='';$('proofFile').value='';$('proofInfo').textContent='JPG, PNG, atau WebP · maksimal 2 MB.';
+}
+$('removeProof').onclick=clearProof;
+async function selectProof(event){
+  const file=event.target.files[0];if(!file)return;
+  clearProof();
+  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>2097152||!file.size){$('proofInfo').textContent='Pilih JPG, PNG, atau WebP maksimal 2 MB.';return}
+  proofLoading=true;setProofDisabled(true);
+  try{
+    const base64=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(Error('Gambar gagal dibaca.'));reader.readAsDataURL(file)});
+    paymentProof={mimeType:file.type,base64};
+    previewUrl=URL.createObjectURL(file);$('proofPreview').src=previewUrl;$('proofPreview').hidden=false;$('removeProof').hidden=false;
+    $('proofInfo').textContent=file.name+' · siap diunggah saat mendaftar.';
+  }catch(err){clearProof();$('proofInfo').textContent=err.message}
+  finally{proofLoading=false;setProofDisabled(submitting)}
+}
+$('proofCamera').onchange=selectProof;$('proofFile').onchange=selectProof;
+function showPaid(families){
+  if(!Array.isArray(families))throw Error('Daftar pembayaran tidak valid.');
+  $('paidRows').replaceChildren();
+  families.forEach(family=>{const row=document.createElement('tr');[family.familyName,family.participants+' orang'].forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell)});$('paidRows').appendChild(row)});
+  $('paidTable').hidden=!families.length;$('paidStatus').textContent=families.length?'':'Belum ada pembayaran yang dikonfirmasi.';
+}
+async function loadPaid(){
+  $('refreshPaid').disabled=true;$('paidStatus').textContent='Memuat daftar pembayaran...';
+  const fail=()=>{$('paidTable').hidden=true;$('paidStatus').textContent='Daftar pembayaran belum dapat dimuat. Silakan coba lagi.';$('refreshPaid').disabled=false};
+  if(window.google&&google.script&&google.script.run){google.script.run.withSuccessHandler(data=>{try{showPaid(data)}catch{fail()}finally{$('refreshPaid').disabled=false}}).withFailureHandler(fail).getPaidFamilies();return}
+  try{const response=await fetch('/api/paid',{cache:'no-store'});if(!response.ok)throw Error();const data=await response.json();showPaid(data.families)}catch{fail()}finally{$('refreshPaid').disabled=false}
+}
+$('refreshPaid').onclick=loadPaid;loadPaid();
 </script></body></html>

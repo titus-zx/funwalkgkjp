@@ -7,6 +7,9 @@
   "functions": {
     "api/register.js": {
       "maxDuration": 30
+    },
+    "api/paid.js": {
+      "maxDuration": 30
     }
   }
 }

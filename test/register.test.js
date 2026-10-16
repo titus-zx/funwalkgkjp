@@ -3,12 +3,12 @@ const assert = require('node:assert/strict');
 const handler = require('../api/register');
 test('registration validates input, handles configuration/upstream failures, and returns confirmed data', async () => {
  const originalFetch=global.fetch, originalUrl=process.env.APPS_SCRIPT_URL;
- const form={familyName:'Keluarga Budi',phone:'081234567890',participants:2};
+ const form={familyName:'Keluarga Budi',phone:'081234567890',participants:2,region:'PP1',paymentProof:null};
  const call=async(method,body)=>{const res={headers:{},setHeader(k,v){this.headers[k]=v},status(s){this.code=s;return this},json(data){this.data=data;return this}};await handler({method,body},res);return res};
  try {
   global.fetch=()=>{throw Error('Unexpected network call')};
   assert.equal((await call('GET')).code,405);
-  for(const body of ['{',null,{...form,participants:31},{...form,participants:'2'},{...form,phone:'abc'}]) assert.equal((await call('POST',body)).code,400);
+  for(const body of ['{',null,{...form,participants:31},{...form,participants:'2'},{...form,phone:'abc'},{...form,region:'Unknown'},{...form,paymentProof:{mimeType:'image/jpeg',base64:'aGVsbG8='}}]) assert.equal((await call('POST',body)).code,400);
   delete process.env.APPS_SCRIPT_URL;
   assert.equal((await call('POST',form)).code,503);
   process.env.APPS_SCRIPT_URL='https://script.google.com/macros/s/example/exec';
