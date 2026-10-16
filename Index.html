@@ -23,6 +23,7 @@ input:focus{outline:2px solid #229466}
 .event-info{padding:18px 26px 0}.event-info dl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0}.event-info dl div{background:#f2f7f2;border-radius:12px;padding:12px}.event-info dt{font-size:12px;color:#65756b;margin-bottom:5px}.event-info dd{margin:0;font-size:14px;font-weight:650;line-height:1.5}.event-info details{margin-top:14px;border-bottom:1px solid #e5ece7;padding-bottom:14px;font-size:14px;line-height:1.6}.event-info summary{cursor:pointer;color:#145c40;font-weight:650}.event-info details p{margin:12px 0 6px}.event-info ul{padding-left:20px;margin:6px 0}.event-info a{color:#145c40;text-underline-offset:3px}.form-title{font-size:21px;margin:0 0 6px}.form-intro{margin:0 0 22px}.included{display:block;margin-top:6px}.theme{font-size:13px;margin-top:12px!important}.contact-links{display:flex;flex-wrap:wrap;gap:8px 16px}
 @media(max-width:360px){header{padding:24px 18px}.event-info{padding:16px 18px 0}form,#success{padding:22px 18px}}
 fieldset.field{border:0;padding:0;min-width:0}legend{font-weight:650;margin-bottom:10px}.regions{display:flex;flex-wrap:wrap;gap:8px}.regions label{display:flex;align-items:center;gap:8px;margin:0;padding:10px 12px;border:1px solid #cddbd2;border-radius:10px;font-size:14px}.regions input{width:auto;padding:0;accent-color:#167b50}.upload-actions{display:flex;flex-wrap:wrap;gap:8px}.secondary{border:1px solid #cddbd2;border-radius:10px;background:#f2f7f2;color:#145c40;padding:10px 12px;font:inherit;cursor:pointer}.proof-preview{display:block;max-width:100%;max-height:180px;border-radius:10px;margin-top:12px}.registrations-section{padding:24px 26px;border-top:1px solid #e5ece7}.registrations-section h2{font-size:20px;margin:0 0 8px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:12px 8px;border-bottom:1px solid #e5ece7;overflow-wrap:anywhere}th:last-child,td:last-child{text-align:right}th{background:#edf7f0}#proofInfo{overflow-wrap:anywhere}
+.file-picker{position:relative;display:inline-flex;align-items:center;margin:0;font-weight:400;overflow:hidden}.file-picker input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;padding:0}.file-picker:focus-within{outline:2px solid #229466;outline-offset:2px}.pagination{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:14px 0;flex-wrap:wrap}.pagination button{font-size:13px;padding:10px}.secondary:disabled{opacity:.5;cursor:default}#registrationSearch{margin-top:4px}#registrationsTable{table-layout:fixed}#registrationsTable th:first-child{width:43%}#registrationsTable th:nth-child(2){width:29%}#registrationsTable th:last-child{width:28%}
 </style>
 </head>
 <body><main>
@@ -30,7 +31,7 @@ fieldset.field{border:0;padding:0;min-width:0}legend{font-weight:650;margin-bott
 <section class="event-info" aria-label="Informasi acara">
 <dl>
 <div><dt>Hari &amp; tanggal</dt><dd>Sabtu, 14 November 2026</dd></div>
-<div><dt>Waktu (WIB)</dt><dd>Mulai 06.30<br>Start Fun Walk 07.00</dd></div>
+<div><dt>Waktu (WIB)</dt><dd>Mulai 06:30</dd></div>
 <div><dt>Start &amp; finish</dt><dd>GKJ Pamulang</dd></div>
 <div><dt>Jarak rute</dt><dd>3 km</dd></div>
 </dl>
@@ -52,18 +53,17 @@ fieldset.field{border:0;padding:0;min-width:0}legend{font-weight:650;margin-bott
 <div class="total"><span>Total biaya pendaftaran</span><strong id="total">Rp10.000</strong><span class="hint">Rp10.000 × jumlah peserta</span><span class="hint included">Termasuk air mineral dan snack pagi per peserta.</span></div>
 <fieldset class="field"><legend>Bukti bayar <span class="hint">(opsional)</span></legend>
 <p class="hint">Boleh daftar dulu dan bayar nanti. Jika sudah membayar, foto atau unggah bukti untuk diverifikasi panitia.</p>
-<div class="upload-actions"><button type="button" class="secondary" id="takePhoto">Foto bukti</button><button type="button" class="secondary" id="chooseProof">Unggah gambar</button><button type="button" class="secondary" id="removeProof" hidden>Hapus</button></div>
-<input type="file" id="proofCamera" accept="image/jpeg,image/png,image/webp" capture="environment" hidden>
-<input type="file" id="proofFile" accept="image/jpeg,image/png,image/webp" hidden>
-<p class="hint" id="proofInfo" role="status">JPG, PNG, atau WebP · maksimal 2 MB.</p><img id="proofPreview" class="proof-preview" alt="Pratinjau bukti bayar" hidden>
-<p class="hint">Nama keluarga dan jumlah peserta akan tampil di tabel setelah pendaftaran berhasil. Bukti bayar dan nomor HP tidak ditampilkan.</p>
+<div class="upload-actions"><label class="secondary file-picker" id="takePhoto">Foto bukti<input type="file" id="proofCamera" accept="image/*" capture="environment"></label><label class="secondary file-picker" id="chooseProof">Unggah gambar<input type="file" id="proofFile" accept="image/*"></label><button type="button" class="secondary" id="removeProof" hidden>Hapus</button></div>
+<p class="hint" id="proofInfo" role="status">Foto akan diperkecil otomatis sebelum diunggah (maksimal 20 MB untuk foto asli).</p><img id="proofPreview" class="proof-preview" alt="Pratinjau bukti bayar" hidden>
+<p class="hint">Nama keluarga, jumlah peserta, dan wilayah pelayanan akan tampil di tabel setelah pendaftaran berhasil. Bukti bayar dan nomor HP tidak ditampilkan.</p>
 </fieldset>
 <p id="error" class="error" role="alert" hidden></p>
 <button id="submit" class="primary" type="submit">Daftar Sekarang</button>
 <p class="hint">Satu pendaftaran untuk satu keluarga. Pastikan nomor WhatsApp dapat dihubungi panitia. Pembayaran belum diproses melalui aplikasi ini.</p>
 </form>
 <section id="success" hidden><h2>✓ Pendaftaran berhasil!</h2><p>Terima kasih, <strong id="resultName"></strong>.</p><p>Nomor pendaftaran:</p><h2 id="resultId"></h2><p id="resultTotal"></p><p class="hint">Simpan nomor pendaftaran ini untuk konfirmasi atau pembayaran belakangan. Nama keluarga akan muncul di tabel pendaftaran. Bukti bayar tetap diverifikasi panitia.</p><button class="primary" onclick="location.reload()">Pendaftaran baru</button></section>
-<section class="registrations-section" aria-labelledby="registrationsTitle"><h2 id="registrationsTitle">Keluarga yang Sudah Mendaftar</h2><p class="hint">Semua keluarga yang telah berhasil mendaftar, termasuk yang akan membayar nanti.</p><p id="registrationsStatus" class="hint" role="status">Memuat daftar pendaftaran...</p><table id="registrationsTable" hidden><thead><tr><th scope="col">Nama keluarga</th><th scope="col">Jumlah peserta</th></tr></thead><tbody id="registrationsRows"></tbody></table><button type="button" class="secondary" id="refreshRegistrations">Muat ulang</button></section>
+<section class="registrations-section" aria-labelledby="registrationsTitle"><h2 id="registrationsTitle">Keluarga yang Sudah Mendaftar</h2><p class="hint">Semua keluarga yang telah berhasil mendaftar, termasuk yang akan membayar nanti.</p><label for="registrationSearch" class="hint">Cari nama keluarga atau wilayah</label><input id="registrationSearch" type="search" placeholder="Contoh: Budi atau PP1" maxlength="100" autocomplete="off">
+<p id="registrationsStatus" class="hint" role="status">Memuat daftar pendaftaran...</p><table id="registrationsTable" hidden><thead><tr><th scope="col">Nama keluarga</th><th scope="col">Wilayah</th><th scope="col">Jumlah peserta</th></tr></thead><tbody id="registrationsRows"></tbody></table><nav id="pagination" class="pagination" aria-label="Halaman daftar pendaftar" hidden><button type="button" class="secondary" id="previousPage">Sebelumnya</button><span id="pageInfo" class="hint" aria-live="polite"></span><button type="button" class="secondary" id="nextPage">Berikutnya</button></nav><button type="button" class="secondary" id="refreshRegistrations">Muat ulang</button></section>
 </main>
 <script>
 let participants=1, paymentProof=null, proofLoading=false, submitting=false, previewUrl=null;const $=id=>document.getElementById(id);
@@ -96,38 +96,73 @@ if(window.google&&google.script&&google.script.run){
 function showError(message){$('error').textContent=message;$('error').hidden=false}
 function reset(){submitting=false;setProofDisabled(false);$('submit').disabled=false;$('submit').textContent='Daftar Sekarang'}
 
-function setProofDisabled(disabled){['takePhoto','chooseProof','removeProof'].forEach(id=>$(id).disabled=disabled)}
-$('takePhoto').onclick=()=>$('proofCamera').click();
-$('chooseProof').onclick=()=>$('proofFile').click();
+function setProofDisabled(disabled){['proofCamera','proofFile','removeProof'].forEach(id=>$(id).disabled=disabled)}
 function clearProof(){
   paymentProof=null;if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=null;
   $('proofPreview').hidden=true;$('proofPreview').removeAttribute('src');$('removeProof').hidden=true;
-  $('proofCamera').value='';$('proofFile').value='';$('proofInfo').textContent='JPG, PNG, atau WebP · maksimal 2 MB.';
+  $('proofCamera').value='';$('proofFile').value='';$('proofInfo').textContent='Foto akan diperkecil otomatis sebelum diunggah (maksimal 20 MB untuk foto asli).';
 }
 $('removeProof').onclick=clearProof;
+async function prepareProof(file){
+  if(!file.size || file.size>20*1024*1024)throw Error('Ukuran foto asli maksimal 20 MB.');
+  const url=URL.createObjectURL(file);
+  try{
+    const image=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(Error('Foto belum bisa dibaca browser ini. Pilih format JPEG di pengaturan kamera atau unggah tangkapan layar bukti.'));img.src=url});
+    let width=image.naturalWidth,height=image.naturalHeight;
+    if(!width||!height)throw Error('Foto tidak valid.');
+    const scale=Math.min(1,1600/Math.max(width,height));
+    const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(width*scale));canvas.height=Math.max(1,Math.round(height*scale));
+    const ctx=canvas.getContext('2d');if(!ctx)throw Error('Browser belum mendukung pemrosesan foto.');
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);
+    let blob;
+    for(const quality of [.85,.7,.55]){
+      blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+      if(blob&&blob.size<=1500000)break;
+    }
+    if(!blob||blob.size>1500000)throw Error('Foto masih terlalu besar. Coba ambil foto lebih dekat atau gunakan tangkapan layar.');
+    const base64=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(Error('Gambar gagal dibaca.'));reader.readAsDataURL(blob)});
+    return {proof:{mimeType:'image/jpeg',base64},blob};
+  }finally{URL.revokeObjectURL(url)}
+}
 async function selectProof(event){
   const file=event.target.files[0];if(!file)return;
-  clearProof();
-  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>2097152||!file.size){$('proofInfo').textContent='Pilih JPG, PNG, atau WebP maksimal 2 MB.';return}
-  proofLoading=true;setProofDisabled(true);
+  clearProof();proofLoading=true;setProofDisabled(true);$('proofInfo').textContent='Menyiapkan foto...';
   try{
-    const base64=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(Error('Gambar gagal dibaca.'));reader.readAsDataURL(file)});
-    paymentProof={mimeType:file.type,base64};
-    previewUrl=URL.createObjectURL(file);$('proofPreview').src=previewUrl;$('proofPreview').hidden=false;$('removeProof').hidden=false;
-    $('proofInfo').textContent=file.name+' · siap diunggah saat mendaftar.';
+    const prepared=await prepareProof(file);paymentProof=prepared.proof;
+    previewUrl=URL.createObjectURL(prepared.blob);$('proofPreview').src=previewUrl;$('proofPreview').hidden=false;$('removeProof').hidden=false;
+    $('proofInfo').textContent=(file.name||'Foto bukti')+' · '+Math.ceil(prepared.blob.size/1024)+' KB · siap diunggah saat mendaftar.';
   }catch(err){clearProof();$('proofInfo').textContent=err.message}
   finally{proofLoading=false;setProofDisabled(submitting)}
 }
 $('proofCamera').onchange=selectProof;$('proofFile').onchange=selectProof;
+let registeredFamilies=[],registrationPage=1;
+const PAGE_SIZE=10;
+function registrationView(families,query,page){
+  const needle=query.trim().toLocaleLowerCase('id-ID');
+  const filtered=families.filter(family=>(family.familyName+' '+(family.region||'')).toLocaleLowerCase('id-ID').includes(needle));
+  const pages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
+  const current=Math.min(Math.max(1,page),pages);
+  return {rows:filtered.slice((current-1)*PAGE_SIZE,current*PAGE_SIZE),total:filtered.length,pages,page:current};
+}
+function renderRegistrations(){
+  const view=registrationView(registeredFamilies,$('registrationSearch').value,registrationPage);registrationPage=view.page;
+  $('registrationsRows').replaceChildren();
+  view.rows.forEach(family=>{const row=document.createElement('tr');[family.familyName,family.region||'—',family.participants+' orang'].forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell)});$('registrationsRows').appendChild(row)});
+  $('registrationsTable').hidden=!view.total;$('pagination').hidden=!view.total;
+  $('registrationsStatus').textContent=view.total?view.total+' keluarga ditemukan.':(registeredFamilies.length?'Tidak ada pendaftar yang cocok.':'Belum ada keluarga yang mendaftar.');
+  $('pageInfo').textContent='Halaman '+view.page+' / '+view.pages;
+  $('previousPage').disabled=view.page===1;$('nextPage').disabled=view.page===view.pages;
+}
 function showRegistrations(families){
   if(!Array.isArray(families))throw Error('Daftar pendaftaran tidak valid.');
-  $('registrationsRows').replaceChildren();
-  families.forEach(family=>{const row=document.createElement('tr');[family.familyName,family.participants+' orang'].forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell)});$('registrationsRows').appendChild(row)});
-  $('registrationsTable').hidden=!families.length;$('registrationsStatus').textContent=families.length?'':'Belum ada keluarga yang mendaftar.';
+  registeredFamilies=families;renderRegistrations();
 }
+$('registrationSearch').oninput=()=>{registrationPage=1;renderRegistrations()};
+$('previousPage').onclick=()=>{registrationPage--;renderRegistrations()};
+$('nextPage').onclick=()=>{registrationPage++;renderRegistrations()};
 async function loadRegistrations(){
   $('refreshRegistrations').disabled=true;$('registrationsStatus').textContent='Memuat daftar pendaftaran...';
-  const fail=()=>{$('registrationsTable').hidden=true;$('registrationsStatus').textContent='Daftar pendaftaran belum dapat dimuat. Silakan coba lagi.';$('refreshRegistrations').disabled=false};
+  const fail=()=>{registeredFamilies=[];$('registrationsRows').replaceChildren();$('pagination').hidden=true;$('registrationsTable').hidden=true;$('registrationsStatus').textContent='Daftar pendaftaran belum dapat dimuat. Silakan coba lagi.';$('refreshRegistrations').disabled=false};
   if(window.google&&google.script&&google.script.run){google.script.run.withSuccessHandler(data=>{try{showRegistrations(data)}catch{fail()}finally{$('refreshRegistrations').disabled=false}}).withFailureHandler(fail).getRegisteredFamilies();return}
   try{const response=await fetch('/api/registrations',{cache:'no-store'});if(!response.ok)throw Error();const data=await response.json();showRegistrations(data.families)}catch{fail()}finally{$('refreshRegistrations').disabled=false}
 }

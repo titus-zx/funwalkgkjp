@@ -20,6 +20,7 @@ function setupSheet() {
   getPaymentFolder_();
   sheet.setFrozenRows(1);
   sheet.getRange(1,1,1,CONFIG.HEADERS.length).setBackground('#145c40').setFontColor('#ffffff').setFontWeight('bold');
+  sheet.getRange('B:B').setNumberFormat('@');
   sheet.getRange('D:D').setNumberFormat('@');
   sheet.getRange('F:F').setNumberFormat('"Rp" #,##0');
   return sheet.getParent().getUrl();
@@ -39,14 +40,14 @@ function register(form) {
   if (!lock.tryLock(10000)) throw new Error('Pendaftaran sedang ramai, coba lagi.');
   try {
     const fee = count * CONFIG.FEE;
-    const id = 'FW26-' + Utilities.formatDate(new Date(),Session.getScriptTimeZone(),'yyMMdd-HHmmss') + '-' + Utilities.getUuid().slice(0,4).toUpperCase();
     const sheet = getSheet_();
+    const id = generateRegistrationId_(sheet);
     let file;
     try {
       if (proof) {
         file = getPaymentFolder_().createFile(Utilities.newBlob(proof.bytes, proof.mimeType, id + proof.extension));
       }
-      sheet.appendRow([new Date(),id,escapeCell_(name),"'" + phone,count,fee,region,file ? file.getUrl() : '',file ? 'Menunggu verifikasi' : 'Belum bayar']);
+      sheet.appendRow([new Date(),"'" + id,escapeCell_(name),"'" + phone,count,fee,region,file ? file.getUrl() : '',file ? 'Menunggu verifikasi' : 'Belum bayar']);
     } catch (err) {
       if (file) file.setTrashed(true);
       throw err;
@@ -106,7 +107,7 @@ function getRegisteredFamilies() {
   if (sheet.getLastRow() < 2) return [];
   return sheet.getRange(2,1,sheet.getLastRow()-1,CONFIG.HEADERS.length).getValues()
     .filter(function(row){return String(row[2]).trim() && Number.isInteger(Number(row[4])) && Number(row[4]) >= 1 && Number(row[4]) <= CONFIG.MAX;})
-    .map(function(row){return {familyName:String(row[2]).replace(/^'(?=[=+@-])/, ''),participants:Number(row[4])};});
+    .map(function(row){return {familyName:String(row[2]).replace(/^'(?=[=+@-])/, ''),participants:Number(row[4]),region:String(row[6] || '')};});
 }
 
 
@@ -121,3 +122,17 @@ function getSpreadsheet_() {
   props.setProperty('SPREADSHEET_ID', active.getId());
   return active;
 }
+
+function generateRegistrationId_(sheet) {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const last = sheet.getLastRow();
+  const existing = new Set(last > 1 ? sheet.getRange(2,2,last-1,1).getValues().map(function(row){return String(row[0]).replace(/^'/, '').trim().toUpperCase();}) : []);
+  for (let attempt=0; attempt<100; attempt++) {
+    const hex = Utilities.getUuid().replace(/-/g, '');
+    let id = '';
+    for (let i=0; i<4; i++) id += alphabet[parseInt(hex.slice(i*2,i*2+2),16) % alphabet.length];
+    if (!existing.has(id)) return id;
+  }
+  throw new Error('Belum dapat membuat ID unik. Coba lagi.');
+}
+

@@ -26,15 +26,19 @@ Form tidak memproses pembayaran. Batasi akses spreadsheet kepada panitia. Endpoi
 
 ## Wilayah, bukti bayar, dan daftar pendaftaran
 - Pilihan wilayah wajib: PP1, PP2, Reni Jaya, Bukit Indah, Serpong.
-- Bukti bayar opsional: kamera atau unggah JPG/PNG/WebP maksimal 2 MB. Tanpa bukti, status **Belum bayar**; dengan bukti, **Menunggu verifikasi**.
+- Bukti bayar opsional: foto kamera atau unggah gambar. Foto asli maksimal 20 MB, diperkecil di browser hingga sisi terpanjang 1600 piksel dan dikonversi menjadi JPEG maksimal 1,5 MB sebelum dikirim. Server tetap membatasi gambar maksimal 2 MB. Format HEIC hanya dapat diproses bila browser perangkat mendukungnya; jika tidak, gunakan pengaturan kamera JPEG atau tangkapan layar. Tanpa bukti, status **Belum bayar**; dengan bukti, **Menunggu verifikasi**.
 - Kolom G–I ditambahkan sebagai Wilayah Pelayanan, Bukti Bayar, Status Pembayaran, tanpa menggeser data lama.
 - **Penting setelah update:** salin Code.gs dan Index.html terbaru ke Apps Script, jalankan setupSheet kembali, izinkan akses Drive, lalu deploy versi baru. Update repo/Vercel saja tidak memperbarui Apps Script.
 - setupSheet membuat folder Drive untuk bukti dan menyimpan ID di Script Property PAYMENT_FOLDER_ID. Bisa diisi dahulu dengan ID folder milik panitia. Folder dan file tidak dibuat publik; beri akses hanya ke panitia yang meninjau.
 - Panitia memeriksa bukti melalui tautan di kolom H, lalu mengisi **Lunas** pada kolom I setelah pembayaran benar-benar diterima. Bayar tunai atau bayar belakangan juga dikonfirmasi dengan mengisi Lunas pada baris pendaftaran yang sama.
-- Tabel publik menampilkan nama keluarga dan jumlah peserta dari semua pendaftaran, tanpa menyaring status pembayaran. Bukti, wilayah, nomor HP, dan data lain tidak dikirim ke tabel publik.
+- Tabel publik menampilkan nama keluarga, wilayah pelayanan, dan jumlah peserta dari semua pendaftaran, tanpa menyaring status pembayaran. Pencarian mencakup nama dan wilayah di seluruh daftar; pagination 10 keluarga per halaman. Bukti, nomor HP, dan data lain tidak dikirim ke tabel publik. Data lama tanpa wilayah ditampilkan dengan tanda —.
 - Untuk bayar belakangan, peserta dapat menghubungi panitia dengan ID pendaftaran; belum ada fitur unggah bukti susulan mandiri.
-- Uji pendaftaran tanpa bukti dan dengan bukti; keduanya harus muncul di tabel dengan hanya nama keluarga serta jumlah peserta. Jangan menandai Lunas otomatis hanya karena gambar diunggah.
+- Uji pendaftaran tanpa bukti dan dengan bukti; keduanya harus muncul di tabel dengan nama keluarga, wilayah, serta jumlah peserta. Jangan menandai Lunas otomatis hanya karena gambar diunggah.
 
 
 ## Spreadsheet terikat dan Web App
 Jalankan setupSheet dari editor yang dibuka lewat spreadsheet tujuan sebelum deployment pertama. Saat Vercel memanggil Web App, script membuka spreadsheet memakai ID yang sudah disimpan karena spreadsheet aktif dapat bernilai null dalam request Web App. Jika menyalin project ke spreadsheet lain, jalankan setupSheet pada salinan tersebut untuk menghubungkan spreadsheet baru.
+
+## ID pendaftaran
+Pendaftaran baru memperoleh ID unik 4 karakter (huruf kapital dan angka, tanpa karakter yang mudah tertukar), dicek terhadap ID yang sudah tersimpan saat lock pendaftaran aktif. ID pendaftaran lama tetap dipertahankan agar konfirmasi sebelumnya tetap berlaku. Perbarui dan deploy Code.gs agar format ID baru dan wilayah pada daftar publik aktif.
+

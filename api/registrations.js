@@ -1,3 +1,4 @@
+const {REGIONS} = require('../lib/validation');
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'GET') {res.setHeader('Allow','GET');return res.status(405).json({error:'Gunakan metode GET.'});}
@@ -10,7 +11,8 @@ module.exports = async function handler(req, res) {
     if (!result.ok || !Array.isArray(result.data)) throw Error('Invalid response');
     const families = result.data.map(row => {
       if (typeof row.familyName !== 'string' || row.familyName.length > 80 || !Number.isInteger(row.participants) || row.participants < 1 || row.participants > 30) throw Error('Invalid row');
-      return {familyName:row.familyName,participants:row.participants};
+      if (row.region != null && row.region !== '' && !REGIONS.includes(row.region)) throw Error('Invalid region');
+      return {familyName:row.familyName,participants:row.participants,region:row.region || ''};
     });
     return res.status(200).json({families});
   } catch {return res.status(502).json({error:'Daftar pendaftaran belum dapat dimuat. Coba lagi nanti.'});}
