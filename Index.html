@@ -20,15 +20,34 @@ input:focus{outline:2px solid #229466}
 .primary:disabled{opacity:.55;cursor:wait}.hint{color:#65756b;font-size:13px;line-height:1.5}
 .error{color:#b91c1c;margin-bottom:16px}#success{text-align:center}#success h2{color:#147d4c}
 [hidden]{display:none!important}
+.event-info{padding:18px 26px 0}.event-info dl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0}.event-info dl div{background:#f2f7f2;border-radius:12px;padding:12px}.event-info dt{font-size:12px;color:#65756b;margin-bottom:5px}.event-info dd{margin:0;font-size:14px;font-weight:650;line-height:1.5}.event-info details{margin-top:14px;border-bottom:1px solid #e5ece7;padding-bottom:14px;font-size:14px;line-height:1.6}.event-info summary{cursor:pointer;color:#145c40;font-weight:650}.event-info details p{margin:12px 0 6px}.event-info ul{padding-left:20px;margin:6px 0}.event-info a{color:#145c40;text-underline-offset:3px}.form-title{font-size:21px;margin:0 0 6px}.form-intro{margin:0 0 22px}.included{display:block;margin-top:6px}.theme{font-size:13px;margin-top:12px!important}.contact-links{display:flex;flex-wrap:wrap;gap:8px 16px}
+@media(max-width:360px){header{padding:24px 18px}.event-info{padding:16px 18px 0}form,#success{padding:22px 18px}}
 </style>
 </head>
 <body><main>
-<header><small>PHBK 2 • GKJ PAMULANG</small><h1>FUN WALK 2026</h1><p>Berjalan Bersama, Menjalin Kebersamaan</p><p>Sabtu, 14 November 2026</p></header>
-<form id="form">
+<header><small>GKJ PAMULANG • PHBK 2</small><h1>FUN WALK 2026</h1><p>Berjalan Bersama, Menjalin Kebersamaan</p><p class="theme">Penutupan Bulan Keluarga 2026<br>“Keluarga sebagai Agen Pelayanan Kasih”</p></header>
+<section class="event-info" aria-label="Informasi acara">
+<dl>
+<div><dt>Hari &amp; tanggal</dt><dd>Sabtu, 14 November 2026</dd></div>
+<div><dt>Waktu (WIB)</dt><dd>Mulai 06.30<br>Start Fun Walk 07.00</dd></div>
+<div><dt>Start &amp; finish</dt><dd>GKJ Pamulang</dd></div>
+<div><dt>Jarak rute</dt><dd>3 km</dd></div>
+</dl>
+<details><summary>Doorprize, kegiatan &amp; kontak panitia</summary>
+<p>Doorprize menarik dan kegiatan di area finish:</p>
+<ul><li>Live Band KPR</li><li>Bazar lapak jualan per wilayah</li><li>Lomba aksesoris Fun Walk terbaik</li><li>Atraksi tim taekwondo GKJ Pamulang</li></ul>
+<p>Informasi dan pendaftaran:</p>
+<div class="contact-links"><a href="https://wa.me/6281297898399" target="_blank" rel="noopener noreferrer">Titus · 081297898399</a><a href="https://wa.me/6285781741339" target="_blank" rel="noopener noreferrer">Youri · 085781741339</a></div>
+<p class="hint">Atau kunjungi stand PHBK 2 selesai ibadah Minggu.</p>
+</details>
+</section>
+<form id="form" aria-labelledby="formTitle">
+<h2 id="formTitle" class="form-title">Form Pendaftaran</h2>
+<p class="hint form-intro">Daftarkan keluarga Anda untuk ikut berjalan bersama.</p>
 <div class="field"><label for="familyName">Nama keluarga / perwakilan</label><input id="familyName" maxlength="80" minlength="3" required placeholder="Contoh: Keluarga Budi Santoso" autocomplete="name"></div>
 <div class="field"><label for="phone">Nomor HP / WhatsApp</label><input id="phone" type="tel" inputmode="tel" required placeholder="081234567890" autocomplete="tel"></div>
 <div class="field"><label>Jumlah peserta (termasuk pendaftar)</label><div class="stepper"><button type="button" id="minus" aria-label="Kurangi peserta">−</button><output id="count">1 orang</output><button type="button" id="plus" aria-label="Tambah peserta">+</button></div></div>
-<div class="total"><span>Total biaya pendaftaran</span><strong id="total">Rp10.000</strong><span class="hint">Rp10.000 × jumlah peserta</span></div>
+<div class="total"><span>Total biaya pendaftaran</span><strong id="total">Rp10.000</strong><span class="hint">Rp10.000 × jumlah peserta</span><span class="hint included">Termasuk air mineral dan snack pagi per peserta.</span></div>
 <p id="error" class="error" role="alert" hidden></p>
 <button id="submit" class="primary" type="submit">Daftar Sekarang</button>
 <p class="hint">Satu pendaftaran untuk satu keluarga. Pastikan nomor WhatsApp dapat dihubungi panitia. Pembayaran belum diproses melalui aplikasi ini.</p>
