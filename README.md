@@ -1,31 +1,24 @@
-# Fun Walk GKJ Pamulang 2026 — Pendaftaran
+# Fun Walk GKJ Pamulang 2026
 
-Google Apps Script Web App + Google Sheets, tanpa server tambahan.
+Form pendaftaran keluarga, Rp10.000 per peserta (1–30 orang). Frontend dan API berjalan di Vercel; data tetap tersimpan di Google Sheets melalui Google Apps Script.
 
-## Fitur
-- Satu perwakilan keluarga: nama keluarga, nomor HP, jumlah peserta 1–30
-- Perhitungan biaya otomatis Rp10.000 per orang
-- Validasi di browser dan server
-- Data tersimpan ke Google Sheets, dengan ID pendaftaran dan waktu
-- Tampilan responsif untuk HP
+## Deploy Vercel
+Repo yang terhubung ke Vercel otomatis membangun halaman dari `Index.html` ke `public/index.html`. Endpoint `/api/register` berjalan sebagai Node.js Function. Tidak perlu framework atau dependensi npm.
 
-## Deploy
-1. Buat Spreadsheet Google baru di akun panitia. Salin ID dari URL Spreadsheet (bagian di antara /d/ dan /edit).
-2. Buka https://script.google.com dan buat project baru.
-3. Salin `Code.gs` ke file kode Apps Script. Tambahkan file HTML bernama **Index** dan salin `Index.html` ke dalamnya. Sesuaikan `appsscript.json` melalui Project Settings > Show appsscript.json.
-4. Di Apps Script > Project Settings > Script Properties, tambahkan `SPREADSHEET_ID` = ID Google Spreadsheet tadi.
-5. Jalankan fungsi `setupSheet` sekali dari editor dan berikan izin yang diminta.
-6. Deploy > New deployment > Web app. Execute as: **Me**. Who has access: **Anyone** (jika peserta umum tanpa login).
-7. Buka URL `/exec` dan uji dengan satu pendaftaran; pastikan datanya masuk ke tab **Pendaftaran**.
+1. Siapkan Google Sheet dan project Apps Script menggunakan `Code.gs`, `Index.html`, serta `appsscript.json`.
+2. Atur Script Property `SPREADSHEET_ID` ke ID spreadsheet. Jalankan `setupSheet` dan berikan izin akses.
+3. Deploy Apps Script sebagai **Web app**, Execute as **Me**, akses **Anyone**. Untuk deployment lama, pilih Manage deployments > Edit > New version > Deploy agar fungsi `doPost` terbaru aktif.
+4. Salin URL deployment berakhiran `/exec`.
+5. Di Vercel > Project > Settings > Environment Variables, tambahkan `APPS_SCRIPT_URL` berisi URL tersebut untuk Production dan Preview. Jangan pakai URL `/dev`.
+6. Redeploy Vercel. Gunakan Root Directory root repo dan pengaturan build/output dari `vercel.json`; hapus override lama yang bertentangan.
+7. Uji pendaftaran dari URL Vercel dan pastikan satu baris baru masuk ke tab **Pendaftaran**.
 
-Untuk pengembangan melalui Codex, edit repo ini, lalu sinkronkan ke Apps Script dengan clasp atau copy-paste manual. `.clasp.json.example` adalah contoh; jangan commit file `.clasp.json` yang berisi ID project personal.
+Tanpa konfigurasi Apps Script, halaman tetap tampil tetapi pengiriman menampilkan pesan bahwa pendaftaran belum dibuka. Jangan memakai penyimpanan sementara di Function Vercel karena data tidak persisten.
 
-## Kolom Google Sheets
-Waktu Daftar | ID Pendaftaran | Nama Keluarga | No HP | Jumlah Peserta | Biaya Pendaftaran (Rp)
+## Pengembangan
+`npm run build` menyiapkan halaman statis. `npm test` memeriksa endpoint dengan respons Apps Script tiruan. Edit `Index.html` sebagai sumber halaman; folder `public` dibuat otomatis. Hosting Apps Script lama juga tetap didukung.
 
-## Catatan keamanan
-- Simpan ID Spreadsheet sebagai Script Property, jangan di HTML.
-- Jangan membagikan Spreadsheet publik; hanya URL Web App.
-- Form publik dapat menerima spam atau pendaftaran ganda. Pantau data, pertimbangkan CAPTCHA / proteksi rate limit sebelum digunakan luas.
-- Tidak ada pembayaran daring atau verifikasi pembayaran.
-- Berikan akses data nomor HP hanya kepada panitia yang membutuhkan.
+## Data
+Kolom: Waktu Daftar | ID Pendaftaran | Nama Keluarga | No HP | Jumlah Peserta | Biaya Pendaftaran (Rp).
+
+Form tidak memproses pembayaran. Batasi akses spreadsheet kepada panitia. Endpoint publik dapat menerima spam atau pendaftaran berulang; jika pengiriman terputus, periksa spreadsheet sebelum mengirim ulang.

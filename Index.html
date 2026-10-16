@@ -46,12 +46,19 @@ const form={familyName:$('familyName').value.trim(),phone:$('phone').value.trim(
 if(form.familyName.length<3){showError('Nama keluarga minimal 3 karakter.');return}
 if(!/^(?:\+62|62|0)8\d{7,11}$/.test(form.phone.replace(/[\s().-]/g,''))){showError('Nomor HP Indonesia tidak valid.');return}
 $('submit').disabled=true;$('submit').textContent='Menyimpan...';
-if(!(window.google&&google.script&&google.script.run)){showError('Buka formulir dari URL Google Apps Script Web App.');reset();return}
-google.script.run.withSuccessHandler(res=>{
+const onSuccess=res=>{
 $('form').hidden=true;$('success').hidden=false;
 $('resultName').textContent=res.familyName;$('resultId').textContent=res.id;
 $('resultTotal').textContent='Jumlah '+res.participants+' peserta • Total '+new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(res.total);
-}).withFailureHandler(err=>{showError(err.message||'Gagal mendaftar. Coba lagi.');reset()}).register(form);
+};
+const onFailure=err=>{showError(err.message||'Gagal mendaftar. Coba lagi.');reset()};
+if(window.google&&google.script&&google.script.run){
+  google.script.run.withSuccessHandler(onSuccess).withFailureHandler(onFailure).register(form);
+}else{
+  fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(form)})
+    .then(async response=>{const data=await response.json();if(!response.ok)throw new Error(data.error||'Gagal mendaftar.');return data})
+    .then(onSuccess).catch(onFailure);
+}
 });
 function showError(message){$('error').textContent=message;$('error').hidden=false}
 function reset(){$('submit').disabled=false;$('submit').textContent='Daftar Sekarang'}

@@ -42,3 +42,14 @@ function getSheet_() {
   return sheet;
 }
 function escapeCell_(value) { return /^[=+\-@\t\r]/.test(value) ? "'" + value : value; }
+
+// Endpoint JSON untuk formulir yang di-host di Vercel.
+function doPost(e) {
+  let result;
+  try {
+    result = {ok: true, data: register(JSON.parse(e.postData.contents))};
+  } catch (err) {
+    result = {ok: false, error: 'Pendaftaran gagal. Periksa data atau hubungi panitia sebelum mencoba lagi.'};
+  }
+  return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
+}
